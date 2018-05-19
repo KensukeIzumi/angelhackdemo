@@ -28,7 +28,7 @@ import javax.imageio.ImageIO
 @SpringBootApplication
 @LineMessageHandler
 class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMessagingClient){
-    @Value("\${cloudVisionApi.key}")
+    @Value("\${cloudVisionServerApi.key}")
     private val VISION_API_KEY: String? = null
 
     val ANDROID_CERT_HEADER = "X-Android-Cert"
@@ -78,6 +78,7 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
                 val packageName = "com.angelhack.denchan"
 
                 visionRequest?.requestHeaders?.set(ANDROID_PACKAGE_HEADER, packageName)
+
 //                val sig = PackageManagerUtils.getSignature(getPackageManager(), packageName)
 //
 //                visionRequest.requestHeaders.set(ANDROID_CERT_HEADER, sig)
