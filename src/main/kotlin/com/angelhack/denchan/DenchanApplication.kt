@@ -80,7 +80,7 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
                             "ありがとう！" +
                                     "その前にもう一個質問！"),
                     TemplateMessage(
-                            "",
+                            "。。。",
                             ButtonsTemplate(
                                     "https://storage.googleapis.com/angelhackdemo/february_valentine01.png",
                                     "",
@@ -99,6 +99,7 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
         if (event.message.text == "絶対いや。") {
             listOfMessages.add(TextMessage("虫歯になれ。"))
         }
+
         listOfMessages.add(TextMessage(event.message.text))
 
         lineMessagingClient.replyMessage(ReplyMessage(event.replyToken, listOfMessages))
