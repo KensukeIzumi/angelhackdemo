@@ -54,6 +54,7 @@ allprojects {
 		compile 'com.google.api-client:google-api-client-android:1.23.0' exclude module: 'httpclient'
 		compile 'com.google.http-client:google-http-client-gson:1.23.0' exclude module: 'httpclient'
 		compile 'com.google.apis:google-api-services-vision:v1-rev369-1.23.0'
+		compile 'org.springframework.boot:spring-boot-starter-web'
 		implementation 'com.google.firebase:firebase-ml-vision:15.0.0'
 		testCompile('org.springframework.boot:spring-boot-starter-test')
 	}
