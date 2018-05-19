@@ -27,10 +27,7 @@ import javax.imageio.ImageIO
 
 @SpringBootApplication
 @LineMessageHandler
-class DenchanApplication {
-
-    @Autowired
-    private var lineMessagingClient: LineMessagingClient? = null
+class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMessagingClient){
     @Value("\${cloudVisionApi.key}")
     private val VISION_API_KEY: String? = null
 
@@ -59,7 +56,7 @@ class DenchanApplication {
 
     @EventMapping
     fun handleImageMessageEvent(event: MessageEvent<ImageMessageContent>): TextMessage {
-        val stream = lineMessagingClient?.getMessageContent(event.message.id)?.get()?.stream
+        val stream = lineMessagingClient.getMessageContent(event.message.id).get().stream
         val image = ImageIO.read(stream)
         val result = prepareAnnotationRequest(image).execute()
         return TextMessage(convertResponseToString(result))
