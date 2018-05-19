@@ -1,6 +1,6 @@
 package com.angelhack.denchan
 
-import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.vision.v1.Vision
 import com.google.api.services.vision.v1.VisionRequest
@@ -11,7 +11,6 @@ import com.linecorp.bot.model.event.Event
 import com.linecorp.bot.model.event.MessageEvent
 import com.linecorp.bot.model.event.message.ImageMessageContent
 import com.linecorp.bot.model.event.message.TextMessageContent
-import com.linecorp.bot.model.message.ImageMessage
 import com.linecorp.bot.model.message.TextMessage
 import com.linecorp.bot.spring.boot.annotation.EventMapping
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler
@@ -63,7 +62,7 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
     }
 
     private fun prepareAnnotationRequest(bitmap: BufferedImage): Vision.Images.Annotate {
-        val httpTransport = AndroidHttp.newCompatibleTransport()
+        val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
         val jsonFactory = GsonFactory.getDefaultInstance()
 
         val requestInitializer = object : VisionRequestInitializer(VISION_API_KEY) {
