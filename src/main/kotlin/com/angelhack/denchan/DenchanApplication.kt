@@ -43,9 +43,9 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
 
     @EventMapping
     @Throws(Exception::class)
-    fun handleTextMessageEvent(event: MessageEvent<TextMessageContent>): TextMessage {
+    fun handleTextMessageEvent(event: MessageEvent<TextMessageContent>): List<TextMessage> {
         println("event: $event")
-        return TextMessage(event.message.text)
+        return listOf(TextMessage(event.message.text), TextMessage("thanks you!"))
     }
 
     @EventMapping
