@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import java.awt.Button
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -39,9 +40,7 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
     @Value("\${cloudVisionServerApi.key}")
     private val VISION_API_KEY: String? = null
 
-    val ANDROID_CERT_HEADER = "X-Android-Cert"
     val ANDROID_PACKAGE_HEADER = "X-Android-Package"
-    val MAX_LABEL_RESULTS = 10
 
     companion object {
         @JvmStatic
@@ -52,9 +51,57 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
 
     @EventMapping
     @Throws(Exception::class)
-    fun handleTextMessageEvent(event: MessageEvent<TextMessageContent>): List<TextMessage> {
+    fun handleTextMessageEvent(event: MessageEvent<TextMessageContent>) {
         println("event: $event")
-        return listOf(TextMessage(event.message.text), TextMessage("thanks you!"))
+        val listOfMessages = mutableListOf<Message>()
+
+        if (event.message.text == "今日") {
+            listOfMessages.add(
+                    TextMessage("おお。それはもう、頑張ってね！！応援しているよ。")
+            )
+        } else if (event.message.text == "3日以内") {
+            listOfMessages.addAll(listOf(
+                    TextMessage("そうなんだ！それならちょうどいい方法があるんだ！"),
+                    TextMessage("ちょっと待ってね。。。"),
+
+                    TextMessage("https://goo.gl/maps/HMm2LzL8jzN2"),
+
+                    TextMessage("ここなんかどうかな！")
+            ))
+        } else if (event.message.text == "1週間以内" || event.message.text == "それ以降") {
+            listOfMessages.add(
+                    TextMessage("寂しい奴だなあ。")
+            )
+        }
+
+        if (event.message.text == "教えて！！！") {
+            listOfMessages.addAll(listOf(
+                    TextMessage(
+                            "ありがとう！" +
+                                    "その前にもう一個質問！"),
+                    TemplateMessage(
+                            "",
+                            ButtonsTemplate(
+                                    "https://storage.googleapis.com/angelhackdemo/february_valentine01.png",
+                                    "",
+                                    "次に大事な予定ってあるかな？",
+                                    listOf(
+                                            MessageAction("今日！", "今日"),
+                                            MessageAction("3日以内", "3日以内"),
+                                            MessageAction("1週間以内", "1週間以内"),
+                                            MessageAction("それ以降", "それ以降")
+                                    )
+                            )
+                    )
+            ))
+        }
+
+        if (event.message.text == "絶対いや。") {
+            listOfMessages.add(TextMessage("虫歯になれ。"))
+        }
+        listOfMessages.add(TextMessage(event.message.text))
+
+        lineMessagingClient.replyMessage(ReplyMessage(event.replyToken, listOfMessages))
     }
 
     @EventMapping
@@ -81,9 +128,9 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
 
                     TemplateMessage(
                             "よおし、",
-                            ConfirmTemplate("アドバイスが聞きたい？",
-                            MessageAction("YES","教えて！！！"),
-                            MessageAction("NO", "絶対いや。")))
+                            ConfirmTemplate("もっと綺麗な歯を保つための秘訣があるんだけど、聞きたい？？",
+                            MessageAction("はい。","教えて！！！"),
+                            MessageAction("絶対いや。", "大きなお世話です。")))
             ))
 
         } else {
@@ -117,10 +164,6 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
                 val packageName = "com.angelhack.denchan"
 
                 visionRequest?.requestHeaders?.set(ANDROID_PACKAGE_HEADER, packageName)
-
-//                val sig = PackageManagerUtils.getSignature(getPackageManager(), packageName)
-//
-//                visionRequest.requestHeaders.set(ANDROID_CERT_HEADER, sig)
             }
         }
 
