@@ -18,15 +18,18 @@ class DenchanApplication {
         fun main(args: Array<String>) {
             runApplication<DenchanApplication>(*args)
         }
+    }
 
-        @EventMapping
-        fun handleTextMessageEvent(event: MessageEvent<TextMessageContent>): TextMessage =
-                TextMessage(event.message.text)
+    @EventMapping
+    @Throws(Exception::class)
+    fun handleTextMessageEvent(event: MessageEvent<TextMessageContent>): TextMessage {
+        println("event: $event")
+        return TextMessage(event.message.text)
+    }
 
-        @EventMapping
-        fun handleDefaultMessageEvent(event: Event) {
-            System.out.print(event)
-        }
+    @EventMapping
+    fun handleDefaultMessageEvent(event: Event) {
+        System.out.print(event)
     }
 }
 
