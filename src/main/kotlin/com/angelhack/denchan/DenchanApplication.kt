@@ -7,11 +7,20 @@ import com.google.api.services.vision.v1.VisionRequest
 import com.google.api.services.vision.v1.VisionRequestInitializer
 import com.google.api.services.vision.v1.model.*
 import com.linecorp.bot.client.LineMessagingClient
+import com.linecorp.bot.model.ReplyMessage
+import com.linecorp.bot.model.action.Action
+import com.linecorp.bot.model.action.MessageAction
 import com.linecorp.bot.model.event.Event
 import com.linecorp.bot.model.event.MessageEvent
 import com.linecorp.bot.model.event.message.ImageMessageContent
 import com.linecorp.bot.model.event.message.TextMessageContent
+import com.linecorp.bot.model.message.ImageMessage
+import com.linecorp.bot.model.message.Message
+import com.linecorp.bot.model.message.TemplateMessage
 import com.linecorp.bot.model.message.TextMessage
+import com.linecorp.bot.model.message.template.ButtonsTemplate
+import com.linecorp.bot.model.message.template.ConfirmTemplate
+import com.linecorp.bot.model.message.template.Template
 import com.linecorp.bot.spring.boot.annotation.EventMapping
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +35,7 @@ import javax.imageio.ImageIO
 
 @SpringBootApplication
 @LineMessageHandler
-class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMessagingClient){
+class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMessagingClient) {
     @Value("\${cloudVisionServerApi.key}")
     private val VISION_API_KEY: String? = null
 
@@ -54,11 +63,42 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
     }
 
     @EventMapping
-    fun handleImageMessageEvent(event: MessageEvent<ImageMessageContent>): TextMessage {
+    fun handleImageMessageEvent(event: MessageEvent<ImageMessageContent>) {
         val stream = lineMessagingClient.getMessageContent(event.message.id).get().stream
         val image = ImageIO.read(stream)
         val result = prepareAnnotationRequest(image).execute()
-        return TextMessage(convertResponseToString(result))
+
+        val listOfMessages = mutableListOf<Message>()
+
+        val textDetectResult = convertResponseToSmileBoolean(result)
+
+        if (textDetectResult) {
+            listOfMessages.addAll(listOf(
+                    TextMessage("みんなと比べた歯の白さは、、、"),
+
+                    ImageMessage("https://storage.googleapis.com/angelhackdemo/dental_result.png",
+                            "https://storage.googleapis.com/angelhackdemo/dental_result.png"),
+
+                    TemplateMessage(
+                            "よおし、",
+                            ConfirmTemplate("アドバイスが聞きたい？",
+                            MessageAction("YES","教えて！！！"),
+                            MessageAction("NO", "絶対いや。")))
+            ))
+
+        } else {
+            listOfMessages.addAll(listOf(
+                    TextMessage("うーん、、、"),
+                    ImageMessage("https://storage.googleapis.com/angelhackdemo/character_hatena.png",
+                            "https://storage.googleapis.com/angelhackdemo/character_hatena.png"),
+
+                    TextMessage("もっと歯をよく見せて！！")
+            ))
+        }
+
+        val reply = ReplyMessage(event.replyToken, listOfMessages)
+
+        lineMessagingClient.replyMessage(reply)
     }
 
     private fun prepareAnnotationRequest(bitmap: BufferedImage): Vision.Images.Annotate {
@@ -131,25 +171,26 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
         return annotateRequest
     }
 
-    fun convertResponseToString(response: BatchAnnotateImagesResponse): String {
+    fun convertResponseToSmileBoolean(response: BatchAnnotateImagesResponse): Boolean {
         var message = "I found these facial expressions:\n\n";
         val labels = response.getResponses().get(0).getFaceAnnotations();
 
-        if (labels != null) {
-            labels.forEach { label ->
-                message += String.format("Joy：%s", label.getJoyLikelihood());
-                message += "\n";
-                message += String.format("Sorrow：%s", label.getSorrowLikelihood());
-                message += "\n";
-                message += String.format("Anger：%s", label.getAngerLikelihood());
-                message += "\n";
-                message += String.format("Surprise：%s", label.getSurpriseLikelihood());
-            }
-        } else {
-            message += "nothing";
-        }
+//        if (labels != null) {
+//            labels.forEach { label ->
+//                message += String.format("Joy：%s", label.getJoyLikelihood());
+//                message += "\n";
+//                message += String.format("Sorrow：%s", label.getSorrowLikelihood());
+//                message += "\n";
+//                message += String.format("Anger：%s", label.getAngerLikelihood());
+//                message += "\n";
+//                message += String.format("Surprise：%s", label.getSurpriseLikelihood());
+//            }
+//        } else {
+//            message += "nothing";
+//        }
+        if (labels == null) return false
 
-        return message;
+        return labels.any { it.joyLikelihood == "VERY_LIKELY" || it.joyLikelihood == "LIKELY" }
     }
 }
 
