@@ -83,8 +83,8 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
                             "。。。",
                             ButtonsTemplate(
                                     "https://storage.googleapis.com/angelhackdemo/february_valentine01.png",
-                                    "",
-                                    "次に大事な予定ってあるかな？",
+                                    "予定を確認してもいいかな。",
+                                    "次に大事な予定があるのはいつだろう。",
                                     listOf(
                                             MessageAction("今日！", "今日"),
                                             MessageAction("3日以内", "3日以内"),
