@@ -96,7 +96,7 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
             ))
         }
 
-        if (event.message.text == "絶対いや。") {
+        if (event.message.text == "大きなお世話です。") {
             listOfMessages.add(TextMessage("虫歯になれ。"))
         }
 
