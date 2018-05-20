@@ -19,9 +19,7 @@ import com.linecorp.bot.model.message.ImageMessage
 import com.linecorp.bot.model.message.Message
 import com.linecorp.bot.model.message.TemplateMessage
 import com.linecorp.bot.model.message.TextMessage
-import com.linecorp.bot.model.message.template.ButtonsTemplate
-import com.linecorp.bot.model.message.template.ConfirmTemplate
-import com.linecorp.bot.model.message.template.Template
+import com.linecorp.bot.model.message.template.*
 import com.linecorp.bot.spring.boot.annotation.EventMapping
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -62,50 +60,90 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
         println("event: $event")
         val listOfMessages = mutableListOf<Message>()
 
-        if (event.message.text == "今日") {
+//        if (event.message.text == "今日") {
+//            listOfMessages.add(
+//                    TextMessage("おお。それはもう、頑張ってね！！応援しているよ。")
+//            )
+//        } else if (event.message.text == "3日以内") {
+//            listOfMessages.addAll(listOf(
+//                    TextMessage("そうなんだ！それならちょうどいい方法があるんだ！"),
+//                    TextMessage("ちょっと待ってね。。。"),
+//
+//                    TextMessage("https://goo.gl/maps/HMm2LzL8jzN2"),
+//
+//                    TextMessage("ここなんかどうかな！")
+//            ))
+//        } else if (event.message.text == "1週間以内" || event.message.text == "それ以降") {
+//            listOfMessages.add(
+//                    TextMessage("寂しい奴だなあ。")
+//            )
+//        }
+        if (event.message.text == "家で手軽にホームケア") {
+            listOfMessages.add(TextMessage("これかなあ"))
+        } else if (event.message.text == "クリニックでお得に") {
             listOfMessages.add(
-                    TextMessage("おお。それはもう、頑張ってね！！応援しているよ。")
-            )
-        } else if (event.message.text == "3日以内") {
-            listOfMessages.addAll(listOf(
-                    TextMessage("そうなんだ！それならちょうどいい方法があるんだ！"),
-                    TextMessage("ちょっと待ってね。。。"),
-
-                    TextMessage("https://goo.gl/maps/HMm2LzL8jzN2"),
-
-                    TextMessage("ここなんかどうかな！")
-            ))
-        } else if (event.message.text == "1週間以内" || event.message.text == "それ以降") {
-            listOfMessages.add(
-                    TextMessage("寂しい奴だなあ。")
-            )
-        }
-
-        if (event.message.text == "教えて！！！") {
-            listOfMessages.addAll(listOf(
-                    TextMessage(
-                            "ありがとう！" +
-                                    "その前にもう一個質問！"),
                     TemplateMessage(
-                            "。。。",
-                            ButtonsTemplate(
-                                    "https://storage.googleapis.com/angelhackdemo/february_valentine01.png",
-                                    "予定を確認してもいいかな。",
-                                    "次に大事な予定があるのはいつだろう。",
+                            "altText",
+                            CarouselTemplate(
                                     listOf(
-                                            MessageAction("今日！", "今日"),
-                                            MessageAction("3日以内", "3日以内"),
-                                            MessageAction("1週間以内", "1週間以内"),
-                                            MessageAction("それ以降", "それ以降")
+                                            CarouselColumn(
+                                                    "https://storage.googleapis.com/angelhackdemo/%E6%AD%AF%E5%8C%BB%E8%80%851.jpeg",
+                                                    "高野クリニック",
+                                                    "費用: 3000円 \n" + "回数: 1",
+                                                    listOf(
+                                                            MessageAction(
+                                                                    "予約する",
+                                                                    "予約する"
+                                                            )
+                                                    )
+
+                                            ),
+
+                                            CarouselColumn(
+                                                    "https://storage.googleapis.com/angelhackdemo/%E6%AD%AF%E5%8C%BB%E8%80%853.jpeg",
+                                                    "大林クリニック",
+                                                    "費用: 8000円 \n" + "回数: 4",
+                                                    listOf(
+                                                            MessageAction(
+                                                                    "予約する",
+                                                                    "予約する"
+                                                            )
+                                                    )
+                                            )
                                     )
                             )
                     )
-            ))
+
+            )
+        } else if (event.message.text == "しっかり丁寧に") {
+            listOfMessages.add(TextMessage("これかなあ"))
         }
 
-        if (event.message.text == "大きなお世話です。") {
-            listOfMessages.add(TextMessage("虫歯になれ。"))
-        }
+//        if (event.message.text == "教えて！！！") {
+//            listOfMessages.addAll(listOf(
+//                    TextMessage(
+//                            "ありがとう！" +
+//                                    "その前にもう一個質問！"),
+//                    TemplateMessage(
+//                            "。。。",
+//                            ButtonsTemplate(
+//                                    "https://storage.googleapis.com/angelhackdemo/february_valentine01.png",
+//                                    "予定を確認してもいいかな。",
+//                                    "次に大事な予定があるのはいつだろう。",
+//                                    listOf(
+//                                            MessageAction("今日！", "今日"),
+//                                            MessageAction("3日以内", "3日以内"),
+//                                            MessageAction("1週間以内", "1週間以内"),
+//                                            MessageAction("それ以降", "それ以降")
+//                                    )
+//                            )
+//                    )
+//            ))
+//        }
+//
+//        if (event.message.text == "大きなお世話です。") {
+//            listOfMessages.add(TextMessage("虫歯になれ。"))
+//        }
 
         if (listOfMessages.isEmpty()) {
             listOfMessages.add(TextMessage(event.message.text))
@@ -133,15 +171,46 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
             listOfMessages.addAll(listOf(
                     TextMessage("みんなと比べた歯の白さは、、、"),
 
-                    ImageMessage("https://storage.googleapis.com/angelhackdemo/dental_result.png",
-                            "https://storage.googleapis.com/angelhackdemo/dental_result.png"),
+                    ImageMessage("https://storage.googleapis.com/angelhackdemo/shard_you_2.png",
+                            "https://storage.googleapis.com/angelhackdemo/shard_you_2.png"),
+
+                    TextMessage("歯の白さにはこんな種類があるんだ。\n今はA4だけど、C1になったらこんな感じ！"),
 
                     TemplateMessage(
-                            "よおし、",
-                            ConfirmTemplate("もっと綺麗な歯を保つための秘訣があるんだけど、聞きたい？？",
-                            MessageAction("はい。","教えて！！！"),
-                            MessageAction("絶対いや。", "大きなお世話です。")))
+                            "alt text",
+                            ButtonsTemplate(
+                                    "https://storage.googleapis.com/angelhackdemo/after.png",
+                                    "",
+                                    ("どう？すごく似合ってると思うな！ \n" +
+                                            "歯のケアにも種類があるんだけど、まとめて見たよ！"),
+                                    listOf(
+                                            MessageAction("家で手軽にホームケア",
+                                                    "家で手軽にホームケア"),
+                                            MessageAction("クリニックでお得に",
+                                                    "クリニックでお得に"),
+                                            MessageAction("しっかり丁寧に",
+                                                    "しっかり丁寧に"
+                                            )
+                                    )
+
+                            )
+                    )
             ))
+//
+//                    ImageMessage("https://storage.googleapis.com/angelhackdemo/shard_you_2.png",
+//                            "https://storage.googleapis.com/angelhackdemo/shard_you_2.png"),
+//
+//                    TextMessage("歯の白さにはこんな種類があるんだ。今はA4だけど、C1になったらこんな感じだよ！"),
+//
+//                    ImageMessage("",
+//                            "")
+
+
+//                    TemplateMessage(
+//                            "よおし、",
+//                            ConfirmTemplate("歯の白さにはこんな種類があるんだ。今はA4だけど、C1になったらこんな感じだよ！",
+//                            MessageAction("はい。","教えて！！！"),
+//                            MessageAction("絶対いや。", "大きなお世話です。")))
 
         } else {
             listOfMessages.addAll(listOf(
