@@ -100,7 +100,9 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
             listOfMessages.add(TextMessage("虫歯になれ。"))
         }
 
-        listOfMessages.add(TextMessage(event.message.text))
+        if (listOfMessages.isEmpty()) {
+            listOfMessages.add(TextMessage(event.message.text))
+        }
 
         lineMessagingClient.replyMessage(ReplyMessage(event.replyToken, listOfMessages))
     }
