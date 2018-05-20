@@ -11,6 +11,7 @@ import com.linecorp.bot.model.ReplyMessage
 import com.linecorp.bot.model.action.Action
 import com.linecorp.bot.model.action.MessageAction
 import com.linecorp.bot.model.event.Event
+import com.linecorp.bot.model.event.FollowEvent
 import com.linecorp.bot.model.event.MessageEvent
 import com.linecorp.bot.model.event.message.ImageMessageContent
 import com.linecorp.bot.model.event.message.TextMessageContent
@@ -47,6 +48,12 @@ class DenchanApplication @Autowired constructor(val lineMessagingClient: LineMes
         fun main(args: Array<String>) {
             runApplication<DenchanApplication>(*args)
         }
+    }
+
+    @EventMapping
+    fun handleFollowEvent(event: FollowEvent): TextMessage {
+        return TextMessage("初めまして。私はあなたの歯の美と健康を支える妖精デンちゃんよ！" +
+                "早速あなたの歯の様子が見たいな！")
     }
 
     @EventMapping
